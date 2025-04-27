@@ -50,5 +50,72 @@ const assignTicket = async (req, res) => {
       res.status(500).json({ message: 'Server error' });
     }
   };
+  // Mettre à jour un ticket
+const updateTicket = async (req, res) => {
+    const { id } = req.params;
+    const { title, description } = req.body;
   
-  module.exports = { createTicket, getMyTickets, assignTicket };
+    try {
+      const ticket = await Ticket.findById(id);
+  
+      if (!ticket) {
+        return res.status(404).json({ message: 'Ticket not found' });
+      }
+  
+      // Optionnel : Vérifier si c'est le créateur ou l'agent assigné qui modifie sauf admin
+      if (
+        ticket.createdBy.toString() !== req.user.id &&
+        ticket.assignedTo?.toString() !== req.user.id &&
+        req.user.role !== 'admin'
+      ) {
+        return res.status(403).json({ message: 'Not authorized to update this ticket' });
+      }
+  
+      if (title) ticket.title = title;
+      if (description) ticket.description = description;
+  
+      await ticket.save();
+      res.status(200).json(ticket);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+  // Clôturer un ticket
+const closeTicket = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const ticket = await Ticket.findById(id);
+  
+      if (!ticket) {
+        return res.status(404).json({ message: 'Ticket not found' });
+      }
+  
+      // Vérifier si c'est le créateur ou l'agent assigné qui clôture sauf admin
+      if (
+        ticket.createdBy.toString() !== req.user.id &&
+        ticket.assignedTo?.toString() !== req.user.id &&
+        req.user.role !== 'admin'
+      ) {
+        return res.status(403).json({ message: 'Not authorized to close this ticket' });
+      }
+  
+      ticket.status = 'closed';
+      await ticket.save();
+  
+      res.status(200).json(ticket);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+  
+  module.exports = {
+    createTicket,
+    getMyTickets,
+    assignTicket,
+    updateTicket,
+    closeTicket
+  };
+  

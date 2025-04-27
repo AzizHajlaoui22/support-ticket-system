@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { createTicket, getMyTickets, assignTicket } = require('../controllers/ticketController');
+const { createTicket, getMyTickets, assignTicket, updateTicket, closeTicket } = require('../controllers/ticketController');
 const { protect, authorizeRoles } = require('../middlewares/authMiddleware');
-
 
 // Créer un ticket
 router.post('/', protect, createTicket);
@@ -12,5 +11,11 @@ router.get('/my', protect, getMyTickets);
 
 // Assigner un ticket à un agent (admin uniquement)
 router.put('/:id/assign', protect, authorizeRoles('admin'), assignTicket);
+
+// Mettre à jour un ticket
+router.put('/:id', protect, updateTicket);
+
+// Clôturer un ticket
+router.put('/:id/close', protect, closeTicket);
 
 module.exports = router;
