@@ -12,7 +12,11 @@ function protect(req, res, next) {
     try {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = { id: decoded.id, role: decoded.role };
+      req.user = { 
+        id: decoded.id, 
+        role: decoded.role, 
+        email: decoded.email 
+      };
       next();
     } catch (error) {
       console.error(error);

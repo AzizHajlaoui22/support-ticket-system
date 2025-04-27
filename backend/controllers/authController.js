@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 // Générer un token JWT
-const generateToken = ({ _id, role }) =>
-  jwt.sign({ id: _id, role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+const generateToken = ({ _id, role, email }) =>
+  jwt.sign({ id: _id, role, email }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
 // Inscription
 const registerUser = async (req, res) => {
