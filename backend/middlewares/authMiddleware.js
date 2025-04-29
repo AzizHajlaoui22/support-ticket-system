@@ -15,7 +15,6 @@ function protect(req, res, next) {
       req.user = { 
         id: decoded.id, 
         role: decoded.role, 
-        email: decoded.email 
       };
       next();
     } catch (error) {

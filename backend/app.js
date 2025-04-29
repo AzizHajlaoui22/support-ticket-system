@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const errorHandler = require('./middlewares/errorHandler');
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -21,6 +22,9 @@ const ticketRoutes = require('./routes/ticketRoutes');
 // Utiliser les routes
 app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
+
+// Middleware global de gestion des erreurs — À placer tout à la fin !
+app.use(errorHandler);
 
 // Lancer le serveur
 const PORT = process.env.PORT || 5000;

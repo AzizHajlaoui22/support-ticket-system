@@ -30,9 +30,16 @@ const sendEmail = async (to, subject, text) => {
 // Fonction spécifique pour notifier du changement de statut
 const sendTicketStatusUpdateEmail = async (userEmail, ticketId, newStatus) => {
   const subject = `Mise à jour du ticket #${ticketId}`;
-  const text = `Bonjour,\n\nLe statut de votre ticket a été mis à jour : ${newStatus}.\n\nMerci de votre confiance.`;
+  const text = `Bonjour,\n\nVotre ticket numéro #${ticketId} a été mis à jour.\n\nNouveau statut : ${newStatus}.\n\nMerci de votre confiance.`;
   
   await sendEmail(userEmail, subject, text);
 };
+// Fonction spécifique pour notifier un agent qu'il a été assigné à un ticket
+const sendTicketAssignedEmail = async (agentEmail, ticketId , senderName, senderRole) => {
+  const subject = `Nouveau ticket assigné #${ticketId}`;
+  const text = `Bonjour,\n\nUn nouveau ticket vous a été assigné par ${senderName} (${senderRole}).\nNuméro du ticket : ${ticketId}.\n\nMerci de traiter cette demande rapidement.`;
+  
+  await sendEmail(agentEmail, subject, text);
+};
 
-module.exports = { sendEmail, sendTicketStatusUpdateEmail };
+module.exports = { sendEmail, sendTicketStatusUpdateEmail , sendTicketAssignedEmail };
