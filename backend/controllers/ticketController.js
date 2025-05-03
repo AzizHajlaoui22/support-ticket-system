@@ -32,11 +32,25 @@ const createTicket = async (req, res) => {
 // Récupérer tous les tickets créés par l'utilisateur connecté
 const getMyTickets = async (req, res) => {
   try {
-    const tickets = await Ticket.find({ createdBy: req.user.id });
+    const tickets = await Ticket.find({ createdBy: req.user.id })
+    .populate('assignedTo', 'name email role');
+    
     res.status(200).json(tickets);
   } catch (error) {
     next(error);
   }  
+};
+// Récupérer tous les tickets assignés à l'utilisateur connecté
+const getAssignedTickets = async (req, res) => {
+  try {
+    const tickets = await Ticket.find({ assignedTo: req.user.id })
+      .populate('assignedTo', 'name email role')   // Pour afficher qui est assigné
+      .populate('createdBy', 'name email role');   // Optionnel : pour afficher qui a créé le ticket
+
+    res.status(200).json(tickets);
+  } catch (error) {
+    next(error);
+  }
 };
 
 // Assigner un ticket à un agent
@@ -82,46 +96,71 @@ const assignTicket = async (req, res) => {
       next(error);
     }
   };
-  // Mettre à jour un ticket
-const updateTicket = async (req, res) => {
+  const updateTicket = async (req, res) => {
     const { id } = req.params;
     const { title, description } = req.body;
   
     try {
       const ticket = await Ticket.findById(id);
-  
       if (!ticket) {
-        const error = new Error('Ticket not found');
-        error.statusCode = 404;
-        return next(error);
+        return res.status(404).json({ message: 'Ticket not found' });
       }
   
-      // Optionnel : Vérifier si c'est le créateur ou l'agent assigné qui modifie sauf admin
-      if (
-        ticket.createdBy.toString() !== req.user.id &&
-        ticket.assignedTo?.toString() !== req.user.id &&
-        req.user.role !== 'admin'
-      ) {
-        const error = new Error('Not authorized to update this ticket');
-        error.statusCode = 403;
-        return next(error);
-      }
+      const isCreator = ticket.createdBy.toString() === req.user.id;
+      const isAssignedToMe = ticket.assignedTo?.toString() === req.user.id;
+      const isAdmin = req.user.role === 'admin';
   
+      // 🌐 Logique de droits :
+      if (isAdmin) {
+        // ✅ admin peut tout faire
+      } else if (req.user.role === 'user') {
+        // ❌ si le ticket est fermé ou assigné, l'user ne peut plus le modifier
+        if (!isCreator || ticket.status === 'closed' || ticket.assignedTo) {
+          return res.status(403).json({ message: 'Accès refusé : vous ne pouvez plus modifier ce ticket.' });
+        }
+      } else if (req.user.role === 'agent') {
+        if (!isAssignedToMe) {
+          return res.status(403).json({ message: 'Accès refusé : vous n\'êtes pas assigné à ce ticket.' });
+        }
+      } // ✅ FIN DU else if
+       
+      // ✏️ Appliquer les modifications
       if (title) ticket.title = title;
       if (description) ticket.description = description;
-      // ✅ récupérer l'utilisateur pour avoir son email
-    const creator = await User.findById(ticket.createdBy);
-
-    if (creator && creator.email) {
-      ticket.status = 'updated';
-      await sendTicketStatusUpdateEmail(creator.email, ticket._id, ticket.status);
-    } else {
-      console.error('Créateur non trouvé ou sans email');
-    }
+  
+      const creator = await User.findById(ticket.createdBy);
+      if (creator?.email) {
+        await sendTicketStatusUpdateEmail(creator.email, ticket._id, ticket.status);
+      }
+  
       await ticket.save();
       res.status(200).json(ticket);
+  
     } catch (error) {
-      next(error);
+      console.error("Erreur updateTicket:", error);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  };  
+  // supprimer un ticket par admin 
+  const deleteTicket = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const ticket = await Ticket.findById(id);
+      if (!ticket) {
+        return res.status(404).json({ message: 'Ticket not found' });
+      }
+  
+      // Seul un administrateur peut supprimer un ticket
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Seul un administrateur peut supprimer un ticket.' });
+      }
+  
+      await ticket.deleteOne(); // ou ticket.remove() si tu utilises Mongoose < 6
+      res.status(200).json({ message: 'Ticket supprimé avec succès.' });
+    } catch (error) {
+      console.error("Erreur deleteTicket:", error);
+      res.status(500).json({ message: 'Erreur serveur lors de la suppression.' });
     }
   };
   // Clôturer un ticket
@@ -171,12 +210,34 @@ const closeTicket = async (req, res) => {
       next(error);
     }
   };
+  const getTicketById = async (req, res, next) => {
+    const { id } = req.params;
+  
+    try {
+      const ticket = await Ticket.findById(id).populate('createdBy assignedTo', 'name email role');
+  
+      if (!ticket) {
+        const error = new Error('Ticket not found');
+        error.statusCode = 404;
+        return next(error);
+      }
+  
+      res.status(200).json(ticket);
+    } catch (error) {
+      next(error);
+    }
+  };
+  
   module.exports = {
     createTicket,
     getMyTickets,
+    getAssignedTickets,
     assignTicket,
     updateTicket,
     closeTicket,
-    getAllTickets
+    getAllTickets,
+    getTicketById,
+    deleteTicket
+
   };
   

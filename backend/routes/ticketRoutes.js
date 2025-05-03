@@ -1,24 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const { createTicket, getMyTickets, assignTicket, updateTicket, closeTicket, getAllTickets } = require('../controllers/ticketController');
+const {
+  createTicket,
+  getMyTickets,
+  getAssignedTickets,
+  assignTicket,
+  updateTicket,
+  closeTicket,
+  getAllTickets,
+  getTicketById,
+  deleteTicket
+} = require('../controllers/ticketController');
 const { protect, authorizeRoles } = require('../middlewares/authMiddleware');
 
 // Créer un ticket
 router.post('/', protect, createTicket);
 
-// Voir ses propres tickets
+// 🔁 D’abord les routes spécifiques
 router.get('/my', protect, getMyTickets);
-
-// Assigner un ticket à un agent (admin uniquement)
-router.put('/:id/assign', protect, authorizeRoles('admin'), assignTicket);
-
-// Mettre à jour un ticket
-router.put('/:id', protect, updateTicket);
-
-// Clôturer un ticket
-router.put('/:id/close', protect, closeTicket);
-
-// ➔ Ta nouvelle route pour voir tous les tickets
+router.get('/assigned', protect, getAssignedTickets);
 router.get('/all', protect, authorizeRoles('admin', 'agent'), getAllTickets);
+
+// Ensuite les routes dynamiques
+router.get('/:id', protect, getTicketById);
+router.put('/:id/assign', protect, authorizeRoles('admin'), assignTicket);
+router.put('/:id', protect, updateTicket);
+router.put('/:id/close', protect, closeTicket);
+router.delete('/:id', protect, authorizeRoles('admin'), deleteTicket);
 
 module.exports = router;
