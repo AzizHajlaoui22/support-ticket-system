@@ -1,0 +1,10 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 mb-4">
+    <a class="navbar-brand" routerLink="/dashboard">🎫 Support Ticket</a>
+  
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <app-role-badge *ngIf="role" [role]="role"></app-role-badge>
+      <a class="btn btn-success" routerLink="/create-ticket">➕ Nouveau Ticket</a>
+      <button class="btn btn-outline-danger ms-2" (click)="logout()">Déconnexion</button>
+    </div>
+  </nav>
+  

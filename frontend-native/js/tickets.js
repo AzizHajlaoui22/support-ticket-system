@@ -187,5 +187,6 @@ async function createTicket(title, description) {
       await loadAgents(); // 👈 Ceci appelle la fonction JS qui va chercher tous les agents
     }
     if (role === "admin") document.getElementById("adminActions").classList.remove("d-none");
-    if ((role === "admin" || role === "agent") && ticket.status !== "closed") document.getElementById("closeActions").classList.remove("d-none");
+    if ((role === "admin" || role === "agent" || role== "user" ) && ticket.status !== "closed") 
+    document.getElementById("closeActions").classList.remove("d-none");
   }

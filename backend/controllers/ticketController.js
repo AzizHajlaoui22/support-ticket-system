@@ -178,7 +178,7 @@ const closeTicket = async (req, res) => {
   
       // Vérifier si c'est le créateur ou l'agent assigné qui clôture sauf admin
       if (
-        ticket.createdBy.toString() !== req.user.id &&
+        //ticket.createdBy.toString() !== req.user.id &&
         ticket.assignedTo?.toString() !== req.user.id &&
         req.user.role !== 'admin'
       ) {

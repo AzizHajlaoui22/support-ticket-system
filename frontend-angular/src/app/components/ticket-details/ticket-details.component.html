@@ -1,0 +1,29 @@
+<div class="container mt-4" *ngIf="ticket">
+    <h3>Détail du Ticket</h3>
+    <div class="card p-4 shadow-sm mt-3">
+      <p><strong>ID:</strong> {{ ticket._id }}</p>
+      <p><strong>Titre:</strong> {{ ticket.title }}</p>
+      <p><strong>Description:</strong> {{ ticket.description }}</p>
+      <p><strong>Statut:</strong> {{ ticket.status }}</p>
+      <p><strong>Créé par:</strong> {{ ticket.createdBy?.name || 'N/A' }}</p>
+      <p><strong>Assigné à:</strong> {{ ticket.assignedTo?.name || 'Non assigné' }}</p>
+    </div>
+  
+    <div *ngIf="role === 'admin'" class="mt-4">
+      <h5>Assigner un agent</h5>
+      <div class="input-group mb-3">
+        <select class="form-select" [(ngModel)]="agentId">
+          <option value="">-- Sélectionner un agent --</option>
+          <option *ngFor="let agent of agents" [value]="agent._id">
+            {{ agent.name }} ({{ agent.email }})
+          </option>
+        </select>
+        <button (click)="assign()" class="btn btn-outline-secondary">Assigner</button>
+      </div>
+    </div>
+  
+    <div *ngIf="ticket.status !== 'closed' && (role === 'admin' || role === 'agent' )" class="mt-3">
+      <button (click)="close()" class="btn btn-danger">Clôturer le ticket</button>
+    </div>
+  </div>
+  

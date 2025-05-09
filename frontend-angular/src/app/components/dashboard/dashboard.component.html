@@ -1,0 +1,12 @@
+<div class="container mt-4">
+  <h3 class="mb-3">Mes Tickets</h3>
+
+  <div *ngFor="let ticket of tickets">
+    <app-ticket-card
+      [ticket]="ticket"
+      [userRole]="role"
+      (delete)="deleteTicket($event)">
+    </app-ticket-card>
+
+  </div>
+</div>

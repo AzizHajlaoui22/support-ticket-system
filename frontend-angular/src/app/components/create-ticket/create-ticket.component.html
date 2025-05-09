@@ -1,0 +1,15 @@
+<div class="container mt-5">
+    <h3 class="mb-4">Créer un nouveau ticket</h3>
+    <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()" class="card p-4 shadow-sm">
+      <div class="mb-3">
+        <label for="title" class="form-label">Titre</label>
+        <input type="text" class="form-control" id="title" formControlName="title">
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" rows="5" formControlName="description"></textarea>
+      </div>
+      <button type="submit" class="btn btn-success">Envoyer le ticket</button>
+    </form>
+  </div>
+  
