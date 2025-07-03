@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 export class DashboardComponent implements OnInit {
   tickets: any[] = [];
   role: string = '';
+  user: any;
+  dashboardTitle: string = 'Mes Tickets';
 
   constructor(
     private ticketService: TicketService,
@@ -19,10 +21,14 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.role = this.auth.getUserRole()?? '';
+    console.log("🧠 Rôle extrait du token dans ngOnInit :", this.role);
+    
     this.loadTickets(); // centraliser la logique ici
+    
   }
 
   loadTickets(): void {
+    console.log("📌 Chargement des tickets pour le rôle :", this.role);
     if (this.role === 'admin') {
       this.ticketService.getAllTickets().subscribe({
         next: res => this.tickets = res as any[],
@@ -60,8 +66,6 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/ticket', id]);
   }
 
-  onDeleteTicket(id: string): void {
-    this.deleteTicket(id); // ou appel direct de loadTickets() si tu préfères
-  }
+ 
 }
 

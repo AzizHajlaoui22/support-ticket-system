@@ -3,7 +3,7 @@
   
     <div class="ms-auto d-flex align-items-center gap-2">
       <app-role-badge *ngIf="role" [role]="role"></app-role-badge>
-      <a class="btn btn-success" routerLink="/create-ticket">➕ Nouveau Ticket</a>
+      <a *ngIf="role === 'user'" class="btn btn-success" routerLink="/create-ticket">➕ Nouveau Ticket</a>
       <button class="btn btn-outline-danger ms-2" (click)="logout()">Déconnexion</button>
     </div>
   </nav>

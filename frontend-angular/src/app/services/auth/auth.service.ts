@@ -33,13 +33,33 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+ 
+ //version node.js
   getUserRole(): string | null {
     const token = this.getToken();
     if (!token) return null;
     const payload = JSON.parse(atob(token.split('.')[1]));
+    console.log("🔍 Payload JWT :", payload);
     return payload.role;
   }
   
+  /*
+ version .net
+ getUserRole(): string | null {
+  const token = this.getToken();
+  if (!token) return null;
+
+  const payloadEncoded = token.split('.')[1];
+  try {
+    const payload = JSON.parse(atob(payloadEncoded));
+    console.log("🔍 Payload JWT :", payload);
+    return payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  } catch (e) {
+    console.error("❌ Erreur de décodage du token :", e);
+    return null;
+  }
+}
+  */
   isLoggedIn(): boolean {
     return !!this.getToken();
   }

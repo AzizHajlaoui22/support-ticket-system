@@ -48,7 +48,8 @@ export class TicketDetailsComponent implements OnInit {
 
   assign() {
     if (!this.agentId) return;
-
+    console.log("🧾 Agent sélectionné pour assignation :", this.agentId); // 👈 LOG ajouté
+    console.log("📌 ID du ticket à assigner :", this.ticket?._id); // 👈 LOG ajouté
     this.ticketService.assignTicket(this.ticket._id, this.agentId).subscribe({
       next: () => {
         alert("🎯 Ticket assigné !");
@@ -60,6 +61,7 @@ export class TicketDetailsComponent implements OnInit {
 
   close() {
     this.ticketService.closeTicket(this.ticket._id).subscribe({
+    // dontnet : this.ticketService.closeTicket(this.ticket.id).subscribe({
       next: () => {
         alert("✅ Ticket clôturé !");
         this.router.navigate(['/dashboard']);

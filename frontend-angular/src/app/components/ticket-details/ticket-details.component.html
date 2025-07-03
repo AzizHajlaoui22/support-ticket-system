@@ -9,15 +9,17 @@
       <p><strong>Assigné à:</strong> {{ ticket.assignedTo?.name || 'Non assigné' }}</p>
     </div>
   
-    <div *ngIf="role === 'admin'" class="mt-4">
+    <div *ngIf="role === 'admin' && ticket.status !== 'closed'" class="mt-4">
       <h5>Assigner un agent</h5>
       <div class="input-group mb-3">
-        <select class="form-select" [(ngModel)]="agentId">
+        <select class="form-select" name="agent" [(ngModel)]="agentId">
           <option value="">-- Sélectionner un agent --</option>
           <option *ngFor="let agent of agents" [value]="agent._id">
+          <!--dans dotnet :<option *ngFor="let agent of agents" [value]="agent.id"></option>-->
             {{ agent.name }} ({{ agent.email }})
           </option>
         </select>
+        
         <button (click)="assign()" class="btn btn-outline-secondary">Assigner</button>
       </div>
     </div>

@@ -4,8 +4,9 @@
       <p class="card-text mb-1"><strong>Statut:</strong> {{ ticket.status }}</p>
       <p class="card-text mb-2"><strong>Assigné à:</strong> {{ ticket.assignedTo?.name || '–' }}</p>
       
-      <a [routerLink]="['/ticket', ticket._id]" class="btn btn-sm btn-primary me-2">Voir</a>
-  
+      <a [routerLink]="['/ticket', ticket._id]" class="btn btn-sm btn-primary me-2">Voir</a> 
+      <!--<a [routerLink]="['/ticket', ticket.id]" class="btn btn-sm btn-primary me-2">Voir</a> -->
+
       <button *ngIf="userRole === 'admin'" (click)="onDelete()" class="btn btn-sm btn-danger">
         Supprimer
       </button>
