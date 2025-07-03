@@ -9,7 +9,7 @@ const createTicket = async (req, res) => {
     const ticket = await Ticket.create({
       title,
       description,
-      createdBy: req.user.id // 🔥 On prend l'utilisateur connecté grâce à protect
+      createdBy: req.user.id //  On prend l'utilisateur connecté grâce à protect
     });
      // 2. Récupérer l'email depuis la base de données via l'ID
      const user = await User.findById(req.user.id);
@@ -96,6 +96,7 @@ const assignTicket = async (req, res) => {
       next(error);
     }
   };
+  /* 
   const updateTicket = async (req, res) => {
     const { id } = req.params;
     const { title, description } = req.body;
@@ -128,11 +129,6 @@ const assignTicket = async (req, res) => {
       if (title) ticket.title = title;
       if (description) ticket.description = description;
   
-      const creator = await User.findById(ticket.createdBy);
-      if (creator?.email) {
-        await sendTicketStatusUpdateEmail(creator.email, ticket._id, ticket.status);
-      }
-  
       await ticket.save();
       res.status(200).json(ticket);
   
@@ -140,7 +136,8 @@ const assignTicket = async (req, res) => {
       console.error("Erreur updateTicket:", error);
       res.status(500).json({ message: 'Erreur serveur' });
     }
-  };  
+  }; 
+  */ 
   // supprimer un ticket par admin 
   const deleteTicket = async (req, res) => {
     const { id } = req.params;
